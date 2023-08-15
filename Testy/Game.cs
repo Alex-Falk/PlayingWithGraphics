@@ -7,95 +7,6 @@ using OpenTK.Mathematics;
 
 namespace Testy
 {
-    internal class Camera
-    {
-        private const float c_defaultCameraSpeed = 2.0f;
-
-        public Vector3 Position { get; set; } = Vector3.UnitZ * 3;
-        public float Pitch
-        {
-            get => m_pitch;
-            set
-            {
-                m_pitch = value;
-                UpdateVectors();
-            }
-
-        }
-
-        public float Yaw
-        {
-            get => m_yaw;
-            set
-            {
-                m_yaw = value;
-                UpdateVectors();
-            }
-        } 
-        
-        public Vector3 Forward { get; private set; }
-        public Vector3 Right { get; private set; }
-        public Vector3 Up { get; private set; }
-
-        private float m_pitch = 0.0f;
-        private float m_yaw = 0.0f;
-
-        private void UpdateVectors()
-        {
-            Forward = Vector3.Normalize(new Vector3()
-            {
-                X = MathF.Cos(Pitch) * MathF.Cos(Yaw),
-                Y = MathF.Sin(Pitch),
-                Z = MathF.Cos(Pitch) * MathF.Sin(Yaw)
-            });
-
-            Right = Vector3.Normalize(Vector3.Cross(Forward, Vector3.UnitY));
-            Up = Vector3.Normalize(Vector3.Cross(Right, Forward));
-        }
-        public Matrix4 GenerateViewMatrix()
-        {
-            return Matrix4.LookAt(Position, Forward, Up);
-        }
-
-        public void OnUpdate(float dt, KeyboardState? keyboardState)
-        {
-            if (keyboardState == null)
-                return;
-
-            if (keyboardState.IsKeyDown(Keys.W))
-            {
-                Position += Forward * dt * c_defaultCameraSpeed;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.S))
-            {
-                Position -= Forward * dt * c_defaultCameraSpeed;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.A))
-            {
-                Position -= Right * dt * c_defaultCameraSpeed;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.D))
-            {
-                Position += Right * dt * c_defaultCameraSpeed;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Q))
-            {
-                Yaw += c_defaultCameraSpeed * dt;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.E))
-            {
-                Yaw -= c_defaultCameraSpeed * dt;
-            }
-
-        }
-
-    }
-
     internal class Game : GameWindow
     {
         private List<RenderableObject> Objects { get; set; } = new List<RenderableObject>() { new RenderableObject() };
@@ -103,7 +14,6 @@ namespace Testy
         private Matrix4 m_projectionMatrix;
         private Matrix4 m_modelMatrix;
         private Matrix4 m_viewMatrix;
-        private Matrix4 m_viewProjectionMatrix;
         private Matrix4 m_textureMatrix;
         private Shader m_shader;
         private Camera m_camera;
@@ -131,7 +41,6 @@ namespace Testy
             m_camera.OnUpdate((float)args.Time, input);
 
             m_viewMatrix = m_camera.GenerateViewMatrix();
-            m_viewProjectionMatrix = m_projectionMatrix * m_viewMatrix;
         }
 
         protected override void OnLoad()
@@ -183,7 +92,7 @@ namespace Testy
             base.OnResize(e);
 
             GL.Viewport(0, 0, e.Width, e.Height);
-            m_projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90), (float)e.Width / (float)e.Height, 0.1f, 50.0f);
+            m_projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver2, (float)e.Width / (float)e.Height, 0.01f, 100.0f);
         }
     }
 }
