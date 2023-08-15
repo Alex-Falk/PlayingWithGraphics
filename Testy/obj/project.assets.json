@@ -4995,11 +4995,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\Testy.csproj",
+      "projectUniqueName": "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\Testy.csproj",
       "projectName": "Testy",
-      "projectPath": "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\Testy.csproj",
+      "projectPath": "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\Testy.csproj",
       "packagesPath": "C:\\Users\\alexf\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\obj\\",
+      "outputPath": "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\alexf\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -5053,7 +5053,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
       }
     }
   }
