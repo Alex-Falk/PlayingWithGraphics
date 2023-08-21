@@ -23,7 +23,7 @@ namespace Testy
             });
         }
 
-        public RenderableObject(string filePath)
+        public RenderableObject(string filePath, Vector3 position, Quaternion rotation, Color4 color)
         {
             var objLoaderFactory = new ObjLoaderFactory();
             var objLoader = objLoaderFactory.Create();
@@ -57,6 +57,9 @@ namespace Testy
                     }
                 }
             }
+
+            m_color = color;
+            m_worldTransform = Matrix4.CreateTranslation(position) * Matrix4.CreateFromQuaternion(rotation);
         }
 
         public void OnLoad()
@@ -92,19 +95,25 @@ namespace Testy
         public void OnUpdateFrame(FrameEventArgs args)
         {
             m_t += (float)args.Time;
-            m_worldTransform = Matrix4.Identity; //Matrix4.CreateTranslation(0f, MathF.Sin(m_t), 0);
+            if (m_t > MathHelper.TwoPi)
+            {
+                m_t = 0;
+            }
         }
 
         public void OnRenderFrame(ref Shader shader)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            //GL.Clear(ClearBufferMask.ColorBufferBit);
 
             shader.SetUniform("uModelMtx", m_worldTransform);
             GL.BindVertexArray(m_vertexArrayObject);
 
-            shader.Use();
+            //shader.Use();
             //GL.DrawArrays(PrimitiveType.Triangles, 0 , 3);
+            shader.SetUniform("uObjectColor", new Vector3(m_color.R, m_color.G, m_color.B));
             GL.DrawElements(PrimitiveType.Triangles, m_indeces.Count, DrawElementsType.UnsignedInt, 0);
+            
+            GL.BindVertexArray(0);
         }
 
         private List<float> m_vetices = new List<float>();
@@ -117,6 +126,8 @@ namespace Testy
         private int m_elementBufferObject;
 
         private Matrix4 m_worldTransform;
+
+        private Color4 m_color;
 
 
     }

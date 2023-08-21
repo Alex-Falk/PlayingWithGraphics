@@ -55,7 +55,7 @@ namespace Testy
 
         public Matrix4 GenerateViewMatrix()
         {
-            return Matrix4.LookAt(Position, Forward, Up);
+            return Matrix4.LookAt(Position, Position + Forward, Up);
         }
 
         public void OnUpdate(float dt, KeyboardState? keyboardState)
@@ -85,12 +85,14 @@ namespace Testy
 
             if (keyboardState.IsKeyDown(Keys.Q))
             {
-                Yaw += c_defaultCameraSpeed * dt;
+                m_yaw -= c_defaultCameraSpeed * dt;
+                UpdateVectors();
             }
 
             if (keyboardState.IsKeyDown(Keys.E))
             {
-                Yaw -= c_defaultCameraSpeed * dt;
+                m_yaw += c_defaultCameraSpeed * dt;
+                UpdateVectors();
             }
 
         }

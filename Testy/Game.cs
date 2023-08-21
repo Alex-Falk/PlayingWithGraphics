@@ -9,7 +9,12 @@ namespace Testy
 {
     internal class Game : GameWindow
     {
-        private List<RenderableObject> Objects { get; set; } = new List<RenderableObject>() { new RenderableObject() };
+        private List<RenderableObject> Objects { get; set; } = new List<RenderableObject>() 
+            { 
+                new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitX, Quaternion.Identity, Color4.Red) , 
+                new RenderableObject("Meshes/capy.obj", 3 * Vector3.UnitZ, Quaternion.FromEulerAngles(MathHelper.PiOver2, 0, 0), Color4.Green) ,
+                new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitY, Quaternion.Identity, Color4.Blue)
+            };
 
         private Matrix4 m_projectionMatrix;
         private Matrix4 m_modelMatrix;
@@ -73,7 +78,7 @@ namespace Testy
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            base.OnRenderFrame(args);
+            //base.OnRenderFrame(args);
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
