@@ -61,6 +61,8 @@ namespace Testy
             m_shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
             m_shader.Use();
 
+            GL.Enable(EnableCap.DepthTest);
+            
             foreach (var objects in Objects)
             {
                 objects.OnLoad();
@@ -84,7 +86,7 @@ namespace Testy
         {
             //base.OnRenderFrame(args);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             m_shader.SetUniform("uProjectionMtx", m_projectionMatrix);
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
