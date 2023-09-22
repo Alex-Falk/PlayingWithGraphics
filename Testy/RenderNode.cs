@@ -1,4 +1,5 @@
-﻿using ObjLoader.Loader.Loaders;
+﻿using System.Diagnostics;
+using ObjLoader.Loader.Loaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -38,6 +39,9 @@ namespace Testy
                 m_vetices.Add(vertex.X);
                 m_vetices.Add(vertex.Y);
                 m_vetices.Add(vertex.Z);
+                m_vetices.Add(vertex.X);
+                m_vetices.Add(vertex.Y);
+                m_vetices.Add(vertex.Z);
             }
 
             foreach (var normal in result.Normals)
@@ -53,7 +57,7 @@ namespace Testy
                 {
                     for (int i = 0; i < face.Count; i++)
                     {
-                        m_indeces.Add(face[i].VertexIndex);
+                        m_indeces.Add(face[i].VertexIndex - 1);
                     }
                 }
             }
@@ -71,8 +75,14 @@ namespace Testy
             m_vertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(m_vertexArrayObject);
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
+            
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.EnableVertexAttribArray(1);
+            
+            GL.GetInteger(GetPName.MaxVertexAttribs, out int maxAttributeCount);
+            Debug.WriteLine($"Maximum number of vertex attributes supported: {maxAttributeCount}");
 
             m_elementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, m_elementBufferObject);
@@ -110,7 +120,7 @@ namespace Testy
 
             //shader.Use();
             //GL.DrawArrays(PrimitiveType.Triangles, 0 , 3);
-            shader.SetUniform("uObjectColor", new Vector3(m_color.R, m_color.G, m_color.B));
+            //shader.SetUniform("uObjectColor", new Vector3(m_color.R, m_color.G, m_color.B));
             GL.DrawElements(PrimitiveType.Triangles, m_indeces.Count, DrawElementsType.UnsignedInt, 0);
             
             GL.BindVertexArray(0);

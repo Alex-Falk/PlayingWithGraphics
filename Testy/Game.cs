@@ -12,7 +12,7 @@ namespace Testy
         private List<RenderableObject> Objects { get; set; } = new List<RenderableObject>() 
             { 
                 new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitX, Quaternion.Identity, Color4.Red) , 
-                new RenderableObject("Meshes/capy.obj", 3 * Vector3.UnitZ, Quaternion.FromEulerAngles(MathHelper.PiOver2, 0, 0), Color4.Green) ,
+                //new RenderableObject("Meshes/capy.obj", 3 * Vector3.UnitZ, Quaternion.FromEulerAngles(MathHelper.PiOver2, 0, 0), Color4.Green) ,
                 new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitY, Quaternion.Identity, Color4.Blue)
             };
 
@@ -22,8 +22,12 @@ namespace Testy
         private Matrix4 m_textureMatrix;
         private Shader m_shader;
         private Camera m_camera;
-        
-        public Game(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title }) { }
+
+        public Game(int width, int height, string title) : base(GameWindowSettings.Default,
+            new NativeWindowSettings() { Size = (width, height), Title = title })
+        {
+            
+        }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {

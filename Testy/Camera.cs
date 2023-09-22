@@ -41,7 +41,11 @@ namespace Testy
         private Vector3 m_forward;
         private Vector3 m_up;
         private Vector3 m_right;
-        
+
+        public Camera()
+        {
+            UpdateVectors();
+        }
         private void UpdateVectors()
         {
             m_forward.X = MathF.Cos(Pitch) * MathF.Cos(Yaw);
