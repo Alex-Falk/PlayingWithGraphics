@@ -9,7 +9,7 @@ using OpenTK.Mathematics;
 
 namespace Testy
 {
-    internal class Shader : IDisposable
+    public class Shader : IDisposable
     {
         public int Handle => m_handle;
 
@@ -129,6 +129,41 @@ namespace Testy
                     break;
 
             }
+        }
+        
+        public bool TrySetUniform<T>(string name, T value)
+        {
+            GL.UseProgram(Handle);
+            switch (value)
+            {
+                case int i:
+                    if (!m_uniformTypes.ContainsKey(name) ||m_uniformTypes[name] != ActiveUniformType.Int)
+                        return false;
+                    GL.Uniform1(m_uniformLocations[name], i);
+                    return true;
+                    break;
+                case float f:
+                    if (!m_uniformTypes.ContainsKey(name) ||m_uniformTypes[name] != ActiveUniformType.Float)
+                        return false;
+                    GL.Uniform1(m_uniformLocations[name], f);
+                    return true;
+                    break;
+                case Matrix4 mtx:
+                    if (!m_uniformTypes.ContainsKey(name) ||m_uniformTypes[name] != ActiveUniformType.FloatMat4)
+                        return false;
+                    GL.UniformMatrix4(m_uniformLocations[name], true, ref mtx);
+                    return true;
+                    break;
+                case Vector3 v3:
+                    if (!m_uniformTypes.ContainsKey(name) || m_uniformTypes[name] != ActiveUniformType.FloatVec3)
+                        return false;
+                    GL.Uniform3(m_uniformLocations[name], v3);
+                    return true;
+                    break;
+
+            }
+
+            return false;
         }
 
         private int m_handle;

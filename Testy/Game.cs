@@ -9,20 +9,20 @@ namespace Testy
 {
     internal class Game : GameWindow
     {
-        private List<RenderableObject> Objects { get; set; } = new List<RenderableObject>() 
+        private List<ObjectBase> Objects { get; set; } = new List<ObjectBase>() 
             { 
                 new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitX, Quaternion.Identity, Color4.Red) , 
                 //new RenderableObject("Meshes/capy.obj", 3 * Vector3.UnitZ, Quaternion.FromEulerAngles(MathHelper.PiOver2, 0, 0), Color4.Green) ,
                 new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitY, Quaternion.Identity, Color4.Blue)
             };
+        
+        // TODO: allow for multiple lights later on
+        private LightSource m_lightSource = new LightSource(3 * Vector3.UnitX,  Color4.Red );
 
         private Matrix4 m_projectionMatrix;
-        private Matrix4 m_modelMatrix;
         private Matrix4 m_viewMatrix;
-        private Matrix4 m_textureMatrix;
         private Shader m_shader;
         private Camera m_camera;
-        private Vector2 m_mousePosition;
 
         public Game(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings() { Size = (width, height), Title = title })
@@ -60,7 +60,7 @@ namespace Testy
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            m_shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
+            m_shader = new Shader("Shaders/shader.vert", "Shaders/phongLighting.frag");
             m_shader.Use();
 
             GL.Enable(EnableCap.DepthTest);
@@ -94,6 +94,8 @@ namespace Testy
 
             m_shader.SetUniform("uProjectionMtx", m_projectionMatrix);
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
+            m_shader.SetUniform("lightColour", m_lightSource.Colour);
+            m_shader.TrySetUniform("viewPos", m_camera.Position);
             foreach (var objects in Objects)
             {
                 objects.OnRenderFrame(ref m_shader);

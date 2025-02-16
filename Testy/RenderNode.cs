@@ -6,9 +6,9 @@ using OpenTK.Windowing.Common;
 
 namespace Testy
 {
-    internal class RenderableObject
+    internal class RenderableObject : ObjectBase
     {
-        public RenderableObject()
+        public RenderableObject() : base(Vector3.Zero, Quaternion.Identity, Color4.White)
         {
             m_vetices.AddRange( new []{
                 0.5f, 0.5f, 0.0f, // top right
@@ -17,14 +17,14 @@ namespace Testy
                 -0.5f, 0.5f, 0.0f, // top left
             });
             
-            m_indeces.AddRange(new []
+            m_indices.AddRange(new []
             {
                 0, 1, 3, // The first triangle will be the top-right half of the triangle
                 1, 2, 3  // Then the second will be the bottom-left half of the triangle
             });
         }
 
-        public RenderableObject(string filePath, Vector3 position, Quaternion rotation, Color4 color)
+        public RenderableObject(string filePath, Vector3 position, Quaternion rotation, Color4 color) : base(position, rotation, color)
         {
             var objLoaderFactory = new ObjLoaderFactory();
             var objLoader = objLoaderFactory.Create();
@@ -39,9 +39,9 @@ namespace Testy
                 m_vetices.Add(vertex.X);
                 m_vetices.Add(vertex.Y);
                 m_vetices.Add(vertex.Z);
-                m_vetices.Add(vertex.X);
-                m_vetices.Add(vertex.Y);
-                m_vetices.Add(vertex.Z);
+                m_vertexColours.Add(m_colour.R);
+                m_vertexColours.Add(m_colour.G);
+                m_vertexColours.Add(m_colour.B);
             }
 
             foreach (var normal in result.Normals)
@@ -57,52 +57,78 @@ namespace Testy
                 {
                     for (int i = 0; i < face.Count; i++)
                     {
-                        m_indeces.Add(face[i].VertexIndex - 1);
+                        m_indices.Add(face[i].VertexIndex - 1);
                     }
                 }
             }
 
-            m_color = color;
+            m_colour = color;
             m_worldTransform = Matrix4.CreateTranslation(position) * Matrix4.CreateFromQuaternion(rotation);
         }
 
-        public void OnLoad()
+        public override void OnLoad()
         {
-            m_vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, m_vertexBufferObject);
+            // VERTEX
+            m_bufferObject[VERTEX_BUFFER] = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, m_bufferObject[VERTEX_BUFFER]);
             GL.BufferData(BufferTarget.ArrayBuffer, m_vetices.Count * sizeof(float), m_vetices.ToArray(), BufferUsageHint.StaticDraw);
 
             m_vertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(m_vertexArrayObject);
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(VERTEX_BUFFER);
             
-            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
-            GL.EnableVertexAttribArray(1);
+            // NORMALS
+            
+            m_bufferObject[NORMAL_BUFFER] = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, m_bufferObject[NORMAL_BUFFER]);
+            GL.BufferData(BufferTarget.ArrayBuffer, m_normals.Count * sizeof(float), m_normals.ToArray(), BufferUsageHint.StaticDraw);
+            
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(NORMAL_BUFFER);
+            
+            // COLOUR
+            
+            m_bufferObject[COLOUR_BUFFER] = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, m_bufferObject[COLOUR_BUFFER]);
+            GL.BufferData(BufferTarget.ArrayBuffer, m_vertexColours.Count * sizeof(float), m_vertexColours.ToArray(), BufferUsageHint.StaticDraw);
+            
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(COLOUR_BUFFER);
+            
+            // INDICES
+            
+            m_bufferObject[INDEX_BUFFER] = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, m_bufferObject[INDEX_BUFFER]);
+            GL.BufferData(BufferTarget.ArrayBuffer, m_indices.Count * sizeof(float), m_indices.ToArray(), BufferUsageHint.StaticDraw);
+            
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(INDEX_BUFFER);
+            
             
             GL.GetInteger(GetPName.MaxVertexAttribs, out int maxAttributeCount);
             Debug.WriteLine($"Maximum number of vertex attributes supported: {maxAttributeCount}");
 
-            m_elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, m_elementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, m_vetices.Count * sizeof(uint), m_indeces.ToArray(), BufferUsageHint.StaticDraw);
+            // m_elementBufferObject = GL.GenBuffer();
+            // GL.BindBuffer(BufferTarget.ElementArrayBuffer, m_elementBufferObject);
+            // GL.BufferData(BufferTarget.ElementArrayBuffer, m_vetices.Count * sizeof(uint), m_indices.ToArray(), BufferUsageHint.StaticDraw);
         }
 
-        public void OnUnload()
+        public override void OnUnload()
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);
             GL.UseProgram(0);
 
             // Delete all the resources.
-            GL.DeleteBuffer(m_vertexBufferObject);
+            GL.DeleteBuffers(MAX_BUFFER, m_bufferObject);
             GL.DeleteVertexArray(m_vertexArrayObject);
         }
 
         private float m_t = 0;
 
-        public void OnUpdateFrame(FrameEventArgs args)
+        public override void OnUpdateFrame(FrameEventArgs args)
         {
             m_t += (float)args.Time;
             if (m_t > MathHelper.TwoPi)
@@ -111,7 +137,7 @@ namespace Testy
             }
         }
 
-        public void OnRenderFrame(ref Shader shader)
+        public override void OnRenderFrame(ref Shader shader)
         {
             //GL.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -121,24 +147,17 @@ namespace Testy
             //shader.Use();
             //GL.DrawArrays(PrimitiveType.Triangles, 0 , 3);
             //shader.SetUniform("uObjectColor", new Vector3(m_color.R, m_color.G, m_color.B));
-            GL.DrawElements(PrimitiveType.Triangles, m_indeces.Count, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, m_indices.Count, DrawElementsType.UnsignedInt, 0);
             
             GL.BindVertexArray(0);
         }
 
         private List<float> m_vetices = new List<float>();
         private List<float> m_normals = new List<float>();
-        private List<int> m_indeces = new List<int>();
+        private List<int> m_indices = new List<int>();
+        private List<float> m_vertexColours = new List<float>();
         private List<float> m_textureCoordinates = new List<float>();
-
-        private int m_vertexBufferObject;
-        private int m_vertexArrayObject;
+        
         private int m_elementBufferObject;
-
-        private Matrix4 m_worldTransform;
-
-        private Color4 m_color;
-
-
     }
 }

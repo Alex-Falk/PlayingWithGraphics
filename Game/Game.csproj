@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>GraphicsLibrary</RootNamespace>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Testy\Testy.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK" Version="4.8.0" />
+      <PackageReference Include="OpenTK.Windowing.Desktop" Version="4.8.0" />
+    </ItemGroup>
+
+</Project>
