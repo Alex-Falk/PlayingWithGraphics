@@ -6,6 +6,7 @@ namespace Testy
     internal class Camera
     {
         private const float c_defaultCameraSpeed = 2.0f;
+        private static readonly float c_defaultCameraRotationSpeed = 2.0f;
 
         public Vector3 Position { get; set; } = Vector3.UnitZ * 3;
 
@@ -14,8 +15,8 @@ namespace Testy
             get => m_pitch;
             set
             {
-                var angle = MathHelper.Clamp(value, -89f, 89f);
-                m_yaw = MathHelper.DegreesToRadians(angle);
+                var angle = MathHelper.Clamp(value, -MathF.PI, MathF.PI);
+                m_yaw = angle;
                 UpdateVectors();
             }
 
@@ -26,7 +27,15 @@ namespace Testy
             get => m_yaw;
             set
             {
-                m_yaw = MathHelper.DegreesToRadians(value);
+                if (value < 0)
+                {
+                    value += ExtraMathF.TwoPI;
+                }
+                else if (value > ExtraMathF.TwoPI)
+                {
+                    value = ExtraMathF.TwoPI - value;
+                }
+                m_yaw = value;
                 UpdateVectors();
             }
         }
@@ -41,6 +50,9 @@ namespace Testy
         private Vector3 m_forward;
         private Vector3 m_up;
         private Vector3 m_right;
+        
+        // TODO: should come from an options system
+        private float m_sensitivity = 2;
 
         public Camera()
         {
@@ -62,7 +74,21 @@ namespace Testy
             return Matrix4.LookAt(Position, Position + Forward, Up);
         }
 
-        public void OnUpdate(float dt, KeyboardState? keyboardState)
+        public void OnUpdate(float dt, KeyboardState? keyboardState, MouseState? mouseState)
+        {
+            UpdateKeyboard(dt, keyboardState);
+            UpdateMouse(dt, mouseState);
+        }
+
+        private void UpdateMouse(float dt, MouseState? mouseState)
+        {
+            if (mouseState == null)
+            {
+                return;
+            }
+        }
+
+        private void UpdateKeyboard(float dt, KeyboardState? keyboardState)
         {
             if (keyboardState == null)
                 return;
@@ -89,16 +115,13 @@ namespace Testy
 
             if (keyboardState.IsKeyDown(Keys.Q))
             {
-                m_yaw -= c_defaultCameraSpeed * dt;
-                UpdateVectors();
+                Yaw = m_yaw - (c_defaultCameraRotationSpeed * dt);
             }
 
             if (keyboardState.IsKeyDown(Keys.E))
             {
-                m_yaw += c_defaultCameraSpeed * dt;
-                UpdateVectors();
+                Yaw = m_yaw + (c_defaultCameraRotationSpeed * dt);
             }
-
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Testy
         private Matrix4 m_textureMatrix;
         private Shader m_shader;
         private Camera m_camera;
+        private Vector2 m_mousePosition;
 
         public Game(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings() { Size = (width, height), Title = title })
@@ -33,21 +34,22 @@ namespace Testy
         {
             base.OnUpdateFrame(args);
 
-            var input = KeyboardState;
-            if (input != null)
+            // TODO Make an input system
+            var keyboardInput = KeyboardState;
+            if (keyboardInput != null)
             {
-                if (input.IsKeyDown(Keys.Escape))
+                if (keyboardInput.IsKeyDown(Keys.Escape))
                 {
                     Close();
                 }
             }
-
+            
             foreach (var objects in Objects)
             {
                 objects.OnUpdateFrame(args);
             }
 
-            m_camera.OnUpdate((float)args.Time, input);
+            m_camera.OnUpdate((float)args.Time, keyboardInput, MouseState);
 
             m_viewMatrix = m_camera.GenerateViewMatrix();
         }
@@ -69,6 +71,8 @@ namespace Testy
             }
 
             m_camera = new Camera();
+            
+            CursorState = CursorState.Grabbed;
         }
 
         protected override void OnUnload()

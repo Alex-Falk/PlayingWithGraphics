@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "88JMSE8AFEj7uN9WYwijZDEVwa8eEdir9kN9lAFpRItkE6MH8PVCYf1WEZJkfSHT28lGtAU75YhO887ZCU+x8g==",
+  "dgSpecHash": "fdM8FmdSDEI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\Testy.csproj",
+  "projectFilePath": "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\Testy.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\alexf\\.nuget\\packages\\cjclutter.objloader\\1.0.0\\cjclutter.objloader.1.0.0.nupkg.sha512",
     "C:\\Users\\alexf\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",

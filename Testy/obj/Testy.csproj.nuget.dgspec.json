@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\Testy.csproj": {}
+    "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\Testy.csproj": {}
   },
   "projects": {
-    "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\Testy.csproj": {
+    "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\Testy.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\Testy.csproj",
+        "projectUniqueName": "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\Testy.csproj",
         "projectName": "Testy",
-        "projectPath": "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\Testy.csproj",
+        "projectPath": "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\Testy.csproj",
         "packagesPath": "C:\\Users\\alexf\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\alexf\\source\\repos\\Testy\\Testy\\obj\\",
+        "outputPath": "C:\\Users\\alexf\\RiderProjects\\PlayingWithGraphics\\Testy\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\alexf\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\alexf\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\alexf\\.dotnet\\sdk\\7.0.410\\RuntimeIdentifierGraph.json"
         }
       }
     }
