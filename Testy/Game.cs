@@ -11,13 +11,13 @@ namespace Testy
     {
         private List<ObjectBase> Objects { get; set; } = new List<ObjectBase>() 
             { 
-                new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitX, Quaternion.Identity, Color4.Red) , 
-                //new RenderableObject("Meshes/capy.obj", 3 * Vector3.UnitZ, Quaternion.FromEulerAngles(MathHelper.PiOver2, 0, 0), Color4.Green) ,
-                new RenderableObject("Meshes/Cube.obj", 3 * Vector3.UnitY, Quaternion.Identity, Color4.Blue)
+                //new RenderableObject(new CubeShape(), 3 * Vector3.UnitX, Quaternion.Identity, Color4.Red) , 
+                //new RenderableObject("Meshes/capy.obj", - 10 * Vector3.UnitX, Quaternion.FromEulerAngles(-MathHelper.PiOver2, 0, 0), Color4.Green) ,
+                new RenderableObject("Meshes/Sphere.obj", new Vector3(0, 0, 0), Quaternion.Identity, Color4.Blue)
             };
         
         // TODO: allow for multiple lights later on
-        private LightSource m_lightSource = new LightSource(3 * Vector3.UnitX,  Color4.Red );
+        private LightSource m_lightSource = new LightSource(new Vector3(5, 5, 5),  Color4.Red );
 
         private Matrix4 m_projectionMatrix;
         private Matrix4 m_viewMatrix;
@@ -95,6 +95,7 @@ namespace Testy
             m_shader.SetUniform("uProjectionMtx", m_projectionMatrix);
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
             m_shader.SetUniform("lightColour", m_lightSource.Colour);
+            m_shader.TrySetUniform("lightPos", m_lightSource.Position);
             m_shader.TrySetUniform("viewPos", m_camera.Position);
             foreach (var objects in Objects)
             {

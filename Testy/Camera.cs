@@ -122,6 +122,14 @@ namespace Testy
             {
                 Yaw = m_yaw + (c_defaultCameraRotationSpeed * dt);
             }
+            if (keyboardState.IsKeyDown(Keys.LeftShift))
+            {
+                Position += m_up * dt * c_defaultCameraSpeed;
+            }
+            if (keyboardState.IsKeyDown(Keys.LeftControl))
+            {
+                Position -= m_up * dt * c_defaultCameraSpeed;
+            }
         }
     }
 }

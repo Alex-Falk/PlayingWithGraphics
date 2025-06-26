@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="CjClutter.ObjLoader" Version="1.0.0" />
+    <PackageReference Include="JeremyAnsel.Media.WavefrontObj" Version="3.0.39" />
     <PackageReference Include="OpenTK" Version="4.8.0" />
   </ItemGroup>
 
@@ -36,6 +37,9 @@
     </None>
     <None Update="Shaders\phongLighting.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Meshes\Sphere.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

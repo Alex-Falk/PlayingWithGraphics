@@ -33,6 +33,12 @@ public abstract class ObjectBase : IObjectWithTransform
         return m_worldTransform;
     }
 
+    public Vector3 Position
+    {
+        get => m_worldTransform.ExtractTranslation();
+        set => m_worldTransform = Matrix4.CreateTranslation(value) * Matrix4.CreateFromQuaternion(m_worldTransform.ExtractRotation());
+    }        
+
     public abstract void OnLoad();
     public abstract void OnUnload();
 
