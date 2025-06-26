@@ -102,7 +102,7 @@ namespace Testy
             shader.TrySetUniform("material.ambientColour", m_material.Ambient);
             shader.TrySetUniform("material.diffuseColour", m_material.Diffuse);
             shader.TrySetUniform("material.specularColour", m_material.Specular);
-            shader.TrySetUniform("material.shininess", 32);
+            shader.TrySetUniform("material.shininess", m_material.Shininess);
             GL.BindVertexArray(m_vertexArrayObject);
             
             GL.DrawElements(PrimitiveType.Triangles, m_vetices.Count, DrawElementsType.UnsignedInt, 0);

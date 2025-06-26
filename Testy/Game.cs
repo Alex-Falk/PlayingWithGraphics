@@ -15,9 +15,6 @@ namespace Testy
                 new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, 0), Quaternion.Identity, Color4.Blue),
                 new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(5, 0, 1), Quaternion.Identity, Color4.Red),
             };
-        
-        // TODO: allow for multiple lights later on
-        private LightSource m_lightSource = new LightSource(new Vector3(5, 5, 5),  Color4.Red );
 
         private Matrix4 m_projectionMatrix;
         private Matrix4 m_viewMatrix;
@@ -27,6 +24,7 @@ namespace Testy
         public Game(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings() { Size = (width, height), Title = title })
         {
+            LightSource.SetupLightSource(Vector3.One, Color4.White);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -93,15 +91,14 @@ namespace Testy
 
             m_shader.SetUniform("uProjectionMtx", m_projectionMatrix);
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
-            m_shader.TrySetUniform("light.ambient",  new Vector3(0.2f, 0.2f, 0.2f));
-            m_shader.TrySetUniform("light.diffuse",  new Vector3(0.5f, 0.5f, 0.5f)); // darken the light a bit to fit the scene
-            m_shader.TrySetUniform("light.specular", new Vector3(1.0f, 1.0f, 1.0f));
-            m_shader.TrySetUniform("light.position", m_lightSource.Position);
             m_shader.TrySetUniform("viewPos", m_camera.Position);
+            LightSource.Instance.Position = m_camera.Position;
+            LightSource.Instance.OnRenderFrame(ref m_shader); // Needs to happen before any of the objects...
             foreach (var objects in Objects)
             {
                 objects.OnRenderFrame(ref m_shader);
             }
+            
             
             SwapBuffers();
         }

@@ -14,6 +14,7 @@ public class MaterialLibrary
         public Vector3 Ambient { get; set; }
         public Vector3 Diffuse { get; set; }
         public Vector3 Specular { get; set; }
+        public float Shininess { get; set; }
     }
     
     public Dictionary<string, Material> Materials { get; private set; } = new Dictionary<string, Material>();
@@ -72,6 +73,11 @@ public class MaterialLibrary
                 var parts = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 material.Specular = new Vector3(
                     float.Parse(parts[1]), float.Parse(parts[2]), float.Parse(parts[3]));
+            }
+            else if (trimmed.StartsWith("Ns "))
+            {
+                var parts = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                material.Shininess = float.Parse(parts[1]);
             }
         }
         return material;

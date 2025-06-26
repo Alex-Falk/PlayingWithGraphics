@@ -39,10 +39,13 @@ void main()
     vec3 diffuse = diff * light.diffuse * material.diffuseColour; // Adjusted diffuse strength
     
     // specular highlights
-    vec3 viewDir = normalize(viewPos - vertPos);
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = material.specularColour * spec * light.specular; // Adjusted specular strength
+    vec3 specular = vec3(0.0);
+    if(diff > 0.0) {
+        vec3 viewDir = normalize(viewPos - vertPos);
+        vec3 reflectDir = reflect(-lightDir, normal);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        specular = material.specularColour * spec * light.specular;// Adjusted specular strength
+    }
     
     vec3 result = (ambientColour + diffuse + specular);
     FragColour = vec4(result, 1.0);

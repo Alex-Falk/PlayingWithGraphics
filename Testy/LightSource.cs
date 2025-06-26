@@ -6,21 +6,27 @@ namespace Testy;
 
 public class LightSource : ObjectBase
 {
-    public Color4 Colour => m_colour;
+    public Vector3 AmbientLight { get; set; }
+    public Vector3 DiffuseLight { get; set; }
+    public Vector3 SpecularLight { get; set; }
+
+    public static LightSource Instance = null;
     
-    public LightSource(Vector3 position, Color4 colour) : base(position, Quaternion.Identity, colour)
+    public static void SetupLightSource(Vector3 position, Color4 colour)
     {
-        
+        Instance?.OnUnload();
+        Instance = new LightSource(position, colour);
+    }
+    
+    private LightSource(Vector3 position, Color4 colour) : base(position, Quaternion.Identity, colour)
+    {
+        AmbientLight = 0.1f * new Vector3(colour.R, colour.G, colour.B);
+        DiffuseLight = 0.8f * new Vector3(colour.R, colour.G, colour.B);
+        SpecularLight = 1.0f * new Vector3(colour.R, colour.G, colour.B);
     }
     
     public override void OnLoad()
     {
-        // m_vertexArrayObject = GL.GenVertexArray();
-        // GL.BindVertexArray(m_vertexArrayObject);
-        //
-        // GL.BindBuffer(BufferTarget.ArrayBuffer, m_vertexBufferObject);
-        
-        
     }
 
     public override void OnUnload()
@@ -33,5 +39,9 @@ public class LightSource : ObjectBase
 
     public override void OnRenderFrame(ref Shader shader)
     {
+        shader.TrySetUniform("light.ambient",  AmbientLight);
+        shader.TrySetUniform("light.diffuse",  DiffuseLight); // darken the light a bit to fit the scene
+        shader.TrySetUniform("light.specular", SpecularLight);
+        shader.TrySetUniform("light.position", Position);
     }
 }
