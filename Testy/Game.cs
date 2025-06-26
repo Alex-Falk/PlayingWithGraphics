@@ -1,4 +1,5 @@
-﻿using OpenTK.Windowing.Common;
+﻿using System.Diagnostics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using GL = OpenTK.Graphics.OpenGL4.GL;
@@ -11,9 +12,8 @@ namespace Testy
     {
         private List<ObjectBase> Objects { get; set; } = new List<ObjectBase>() 
             { 
-                //new RenderableObject(new CubeShape(), 3 * Vector3.UnitX, Quaternion.Identity, Color4.Red) , 
-                //new RenderableObject("Meshes/capy.obj", - 10 * Vector3.UnitX, Quaternion.FromEulerAngles(-MathHelper.PiOver2, 0, 0), Color4.Green) ,
-                new RenderableObject("Meshes/Sphere.obj", new Vector3(0, 0, 0), Quaternion.Identity, Color4.Blue)
+                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, 0), Quaternion.Identity, Color4.Blue),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(5, 0, 1), Quaternion.Identity, Color4.Red),
             };
         
         // TODO: allow for multiple lights later on
@@ -27,7 +27,6 @@ namespace Testy
         public Game(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings() { Size = (width, height), Title = title })
         {
-            
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -94,8 +93,10 @@ namespace Testy
 
             m_shader.SetUniform("uProjectionMtx", m_projectionMatrix);
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
-            m_shader.SetUniform("lightColour", m_lightSource.Colour);
-            m_shader.TrySetUniform("lightPos", m_lightSource.Position);
+            m_shader.TrySetUniform("light.ambient",  new Vector3(0.2f, 0.2f, 0.2f));
+            m_shader.TrySetUniform("light.diffuse",  new Vector3(0.5f, 0.5f, 0.5f)); // darken the light a bit to fit the scene
+            m_shader.TrySetUniform("light.specular", new Vector3(1.0f, 1.0f, 1.0f));
+            m_shader.TrySetUniform("light.position", m_lightSource.Position);
             m_shader.TrySetUniform("viewPos", m_camera.Position);
             foreach (var objects in Objects)
             {

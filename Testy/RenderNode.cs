@@ -9,51 +9,17 @@ namespace Testy
 {
     internal class RenderableObject : ObjectBase
     {
-        public RenderableObject(Shape shape, Vector3 position, Quaternion rotation, Color4 color) : base(position,
-            rotation, color)
+        public RenderableObject(OBJLibrary.OBJMesh mesh, MaterialLibrary.Material material, Vector3 position,
+            Quaternion rotation, Color4 color) : base(position, rotation, color)
         {
-            m_vetices = shape.Vertices.ToList();
-            m_indices = shape.Indices.ToList();
-            shape.GenerateNormals();
-            m_normals = shape.Normals.ToList();
-            //m_normals = shape.Normals.ToList();
-        }
-
-        public RenderableObject(string filePath, Vector3 position, Quaternion rotation, Color4 color) : base(position, rotation, color)
-        {
-            var file = ObjFile.FromFile(filePath);
-
             // Expanded buffers
-            m_vetices = new List<Vector3>();
-            m_normals = new List<Vector3>();
-            m_vertexColours = new List<float>();
-            m_indices = new List<int>();
-
-            int vertIndex = 0;
-            foreach (var face in file.Faces)
-            {
-                foreach (var vertex in face.Vertices)
-                {
-                    // Add position
-                    var pos = file.Vertices[vertex.Vertex - 1];
-                    m_vetices.Add(new Vector3(pos.Position.X, pos.Position.Y, pos.Position.Z));
-
-                    // Add normal
-                    var normal = file.VertexNormals[vertex.Normal - 1];
-                    m_normals.Add(normal.Convert());
-
-                    // Add color
-                    m_vertexColours.Add(m_colour.R);
-                    m_vertexColours.Add(m_colour.G);
-                    m_vertexColours.Add(m_colour.B);
-
-                    // Add index
-                    m_indices.Add(vertIndex++);
-                }
-            }
-
-            m_colour = color;
-            m_worldTransform = Matrix4.CreateTranslation(position) * Matrix4.CreateFromQuaternion(rotation);
+            m_vetices = mesh.Vertices;
+            m_normals = mesh.Normals;
+            m_vertexColours = mesh.VertexColours;
+            m_indices = mesh.Indices;
+            
+            m_material = material;
+            
         }
 
         public override void OnLoad()
@@ -133,18 +99,22 @@ namespace Testy
         public override void OnRenderFrame(ref Shader shader)
         {
             shader.SetUniform("uModelMtx", m_worldTransform);
+            shader.TrySetUniform("material.ambientColour", m_material.Ambient);
+            shader.TrySetUniform("material.diffuseColour", m_material.Diffuse);
+            shader.TrySetUniform("material.specularColour", m_material.Specular);
+            shader.TrySetUniform("material.shininess", 32);
             GL.BindVertexArray(m_vertexArrayObject);
             
             GL.DrawElements(PrimitiveType.Triangles, m_vetices.Count, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
         }
 
-        private List<Vector3> m_vetices = new List<Vector3>();
-        private List<Vector3> m_normals = new List<Vector3>();
-        private List<int> m_indices = new List<int>();
-        private List<float> m_vertexColours = new List<float>();
+        private readonly List<Vector3> m_vetices;
+        private readonly List<Vector3> m_normals;
+        private readonly List<int> m_indices;
+        private readonly List<float> m_vertexColours = new List<float>();
         private List<float> m_textureCoordinates = new List<float>();
         
-        private int m_elementBufferObject;
+        private readonly MaterialLibrary.Material m_material;
     }
 }
