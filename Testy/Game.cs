@@ -13,13 +13,19 @@ namespace Testy
         private List<ObjectBase> Objects { get; set; } = new List<ObjectBase>() 
             { 
                 new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, 0), Quaternion.Identity, Color4.Blue),
-                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(5, 0, 1), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(5, 0, 0), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(-5, 0, 0), Quaternion.Identity, Color4.Blue),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 5, 0), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, -5, 0), Quaternion.Identity, Color4.Blue),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, 5), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, -5), Quaternion.Identity, Color4.Red),
             };
 
         private Matrix4 m_projectionMatrix;
         private Matrix4 m_viewMatrix;
         private Shader m_shader;
         private Camera m_camera;
+        private float m_time;
 
         public Game(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings() { Size = (width, height), Title = title })
@@ -86,13 +92,24 @@ namespace Testy
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             //base.OnRenderFrame(args);
+            
+            m_time += (float)args.Time;
+            if (m_time >= ExtraMath.TwoPI)
+            {
+                m_time = 0;
+            }
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             m_shader.SetUniform("uProjectionMtx", m_projectionMatrix);
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
             m_shader.TrySetUniform("viewPos", m_camera.Position);
-            LightSource.Instance.Position = m_camera.Position;
+            
+            LightSource.Instance.Position = new Vector3(
+                (float)Math.Cos(2 * m_time) * 10,
+                0,
+                (float)Math.Sin(2 * m_time) * 10
+            );
             LightSource.Instance.OnRenderFrame(ref m_shader); // Needs to happen before any of the objects...
             foreach (var objects in Objects)
             {
