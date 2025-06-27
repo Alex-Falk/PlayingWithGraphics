@@ -17,5 +17,5 @@ void main()
     gl_Position = vec4(aPosition, 1.0) * uModelMtx * uViewMtx * uProjectionMtx;
     vertColour = aColour;
     vertNormal = aNormal * mat3(transpose(inverse(uModelMtx)));
-    vertPos = (uModelMtx * vec4(aPosition, 1.0)).xyz ;
+    vertPos = (vec4(aPosition, 1.0) * uModelMtx).xyz ;
 }
