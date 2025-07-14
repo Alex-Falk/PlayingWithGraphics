@@ -8,3 +8,7 @@ Testy.sln.DotSettings.user
 Testy/bin/*
 
 Testy/obj/*
+
+Debugging/bin/
+
+Debugging/obj/

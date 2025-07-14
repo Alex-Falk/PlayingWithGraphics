@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using Imgui;
+using ImGuiNET;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -10,15 +12,17 @@ namespace Testy
 {
     internal class Game : GameWindow
     {
+        ImGuiController m_imguiController;
+        
         private List<ObjectBase> Objects { get; set; } = new List<ObjectBase>() 
             { 
-                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, 0), Quaternion.Identity, Color4.Blue),
-                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(5, 0, 0), Quaternion.Identity, Color4.Red),
-                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(-5, 0, 0), Quaternion.Identity, Color4.Blue),
-                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 5, 0), Quaternion.Identity, Color4.Red),
-                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, -5, 0), Quaternion.Identity, Color4.Blue),
-                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, 5), Quaternion.Identity, Color4.Red),
-                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], new Vector3(0, 0, -5), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], "Textures/test_from_tutorial.png", new Vector3(0, 0, 0), Quaternion.Identity, Color4.Blue),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], "Textures/test_from_tutorial.png", new Vector3(5, 0, 0), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], "Textures/test_from_tutorial.png", new Vector3(-5, 0, 0), Quaternion.Identity, Color4.Blue),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], "Textures/test_from_tutorial.png", new Vector3(0, 5, 0), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["cube"], MaterialLibrary.Instance.Materials["Gold"], "Textures/test_from_tutorial.png", new Vector3(0, -5, 0), Quaternion.Identity, Color4.Blue),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], "Textures/test_from_tutorial.png", new Vector3(0, 0, 5), Quaternion.Identity, Color4.Red),
+                new RenderableObject(OBJLibrary.Instance.Meshes["Sphere"], MaterialLibrary.Instance.Materials["Gold"], "Textures/test_from_tutorial.png", new Vector3(0, 0, -5), Quaternion.Identity, Color4.Red),
             };
 
         private Matrix4 m_projectionMatrix;
@@ -26,11 +30,14 @@ namespace Testy
         private Shader m_shader;
         private Camera m_camera;
         private float m_time;
+        private float m_cameraSpeed = 10;
 
         public Game(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings() { Size = (width, height), Title = title })
         {
             LightSource.SetupLightSource(Vector3.One, Color4.White);
+            
+            m_imguiController = new ImGuiController(width, height);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -75,7 +82,7 @@ namespace Testy
 
             m_camera = new Camera();
             
-            CursorState = CursorState.Grabbed;
+            //CursorState = CursorState.Grabbed;
         }
 
         protected override void OnUnload()
@@ -92,6 +99,7 @@ namespace Testy
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             //base.OnRenderFrame(args);
+            m_imguiController.Update(this, (float)args.Time);
             
             m_time += (float)args.Time;
             if (m_time >= ExtraMath.TwoPI)
@@ -105,27 +113,58 @@ namespace Testy
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
             m_shader.TrySetUniform("viewPos", m_camera.Position);
             
-            LightSource.Instance.Position = new Vector3(
-                (float)Math.Cos(2 * m_time) * 10,
-                0,
-                (float)Math.Sin(2 * m_time) * 10
-            );
+            // LightSource.Instance.Position = new Vector3(
+            //     (float)Math.Cos(2 * m_time) * m_cameraSpeed,
+            //     0,
+            //     (float)Math.Sin(2 * m_time) * m_cameraSpeed
+            // );
             LightSource.Instance.OnRenderFrame(ref m_shader); // Needs to happen before any of the objects...
             foreach (var objects in Objects)
             {
                 objects.OnRenderFrame(ref m_shader);
             }
             
+            // Enable Docking
+            // ImGui.DockSpaceOverViewport();
+            //
+            //ImGui.ShowDemoWindow();
+
+            DebugUpdate(args.Time);
+            
+            m_imguiController.Render();
+            //
+            // ImGuiController.CheckGLError("End of frame");
             
             SwapBuffers();
         }
 
+        private void DebugUpdate(double argsTime)
+        {
+            ImGui.SetKeyboardFocusHere();
+            
+            ImGui.Begin("Game Debug");
+            {
+                ImGui.Text($"FPS: {1.0 / argsTime:0.00}");
+                var lightPos = LightSource.Instance.Position.ToSystemVec3();
+                ImGui.Text($"Camera Position: {m_camera.Position}");
+                ImGui.Text($"Projection Matrix: {m_projectionMatrix}");
+                ImGui.Text($"View Matrix: {m_viewMatrix}");
+
+                ImGui.SliderFloat3("Light Position", ref lightPos, - 100.0f, 100.0f);
+                LightSource.Instance.Position = lightPos.ToOpenTkVec3();
+
+            }
+            ImGui.End();
+        }
+ 
         protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
 
             GL.Viewport(0, 0, e.Width, e.Height);
             m_projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver2, (float)e.Width / (float)e.Height, 0.01f, 100.0f);
+            
+            m_imguiController.WindowResized(ClientSize.X, ClientSize.Y);
         }
     }
 }

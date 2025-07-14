@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
@@ -9,8 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="CjClutter.ObjLoader" Version="1.0.0" />
+    <PackageReference Include="ImGui.NET" Version="1.91.6.1" />
     <PackageReference Include="JeremyAnsel.Media.WavefrontObj" Version="3.0.39" />
     <PackageReference Include="OpenTK" Version="4.8.0" />
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +46,20 @@
     <None Update="Meshes\Gold.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Textures\test_from_tutorial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Textures\test_from_tutorial_spec.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Textures\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Debugging\Debugging.csproj" />
   </ItemGroup>
 
 </Project>

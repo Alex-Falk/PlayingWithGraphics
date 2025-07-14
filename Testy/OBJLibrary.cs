@@ -62,12 +62,22 @@ public class OBJLibrary
 
                 // Add normal
                 var normal = file.VertexNormals[vertex.Normal - 1];
-                result.Normals.Add(normal.Convert());
+                result.Normals.Add(normal.ToOpenTkVec3());
                 
                 // Add color
                 result.VertexColours.Add(1.0f); // Default color value, can be changed later
                 result.VertexColours.Add(1.0f);
                 result.VertexColours.Add(1.0f);
+
+                if (vertex.Texture > 0)
+                {
+                    var texCoords = file.TextureVertices[vertex.Texture - 1]; // why is this not Vector2?
+                    result.TexCoords.Add(new Vector2(texCoords.X, texCoords.Y));
+                }
+                else
+                {
+                    result.TexCoords.Add(new Vector2(0.0f, 1.0f)); // Something went wrong?
+                }
 
                 // Add index
                 result.Indices.Add(vertIndex++);

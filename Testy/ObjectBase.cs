@@ -1,17 +1,19 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using Testy.Interfaces;
+// ReSharper disable InconsistentNaming
 
 namespace Testy;
 
 public abstract class ObjectBase : IObjectWithTransform
 {
     // A bit annoying and hacky really but I don't want to have to cast every time I use it...
-    public const int VERTEX_BUFFER = (int)BufferTypes.Vertex;
-    public const int COLOUR_BUFFER = (int)BufferTypes.Colour;
-    public const int NORMAL_BUFFER = (int)BufferTypes.Normal;
-    public const int INDEX_BUFFER = (int)BufferTypes.Index;
-    public const int MAX_BUFFER = (int)BufferTypes.MAX_BUFFER;
+    protected const int VERTEX_BUFFER = (int)BufferTypes.Vertex;
+    protected const int COLOUR_BUFFER = (int)BufferTypes.Colour;
+    protected const int NORMAL_BUFFER = (int)BufferTypes.Normal;
+    protected const int INDEX_BUFFER = (int)BufferTypes.Index;
+    protected const int TEXTURE_BUFFER = (int)BufferTypes.Texture;
+    protected const int MAX_BUFFER = (int)BufferTypes.MAX_BUFFER;
     
     private enum BufferTypes
     {
@@ -19,7 +21,8 @@ public abstract class ObjectBase : IObjectWithTransform
         Colour = 1,
         Normal = 2,
         Index = 3,
-        MAX_BUFFER = 4
+        Texture = 4,
+        MAX_BUFFER = 5
     }
     
     public ObjectBase(Vector3 position, Quaternion rotation, Color4 colour)
@@ -46,8 +49,8 @@ public abstract class ObjectBase : IObjectWithTransform
 
     public abstract void OnRenderFrame(ref Shader shader);
     
-    protected int[] m_bufferObject = new int[MAX_BUFFER];
+    protected readonly int[] m_bufferObject = new int[MAX_BUFFER];
     protected int m_vertexArrayObject;
     protected Color4 m_colour;
-    protected Matrix4 m_worldTransform = Matrix4.Identity;
+    protected Matrix4 m_worldTransform;
 }
