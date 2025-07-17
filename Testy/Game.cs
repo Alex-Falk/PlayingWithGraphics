@@ -30,7 +30,6 @@ namespace Testy
         private Shader m_shader;
         private Camera m_camera;
         private float m_time;
-        private float m_cameraSpeed = 10;
 
         public Game(int width, int height, string title) : base(GameWindowSettings.Default,
             new NativeWindowSettings() { Size = (width, height), Title = title })
@@ -113,11 +112,6 @@ namespace Testy
             m_shader.SetUniform("uViewMtx", m_viewMatrix);
             m_shader.TrySetUniform("viewPos", m_camera.Position);
             
-            // LightSource.Instance.Position = new Vector3(
-            //     (float)Math.Cos(2 * m_time) * m_cameraSpeed,
-            //     0,
-            //     (float)Math.Sin(2 * m_time) * m_cameraSpeed
-            // );
             LightSource.Instance.OnRenderFrame(ref m_shader); // Needs to happen before any of the objects...
             foreach (var objects in Objects)
             {

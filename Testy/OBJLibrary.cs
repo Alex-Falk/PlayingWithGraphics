@@ -72,7 +72,7 @@ public class OBJLibrary
                 if (vertex.Texture > 0)
                 {
                     var texCoords = file.TextureVertices[vertex.Texture - 1]; // why is this not Vector2?
-                    result.TexCoords.Add(new Vector2(texCoords.X, texCoords.Y));
+                    result.TexCoords.Add(new Vector2(texCoords.X, 1 - texCoords.Y));
                 }
                 else
                 {

@@ -20,7 +20,7 @@ public class LightSource : ObjectBase
     
     private LightSource(Vector3 position, Color4 colour) : base(position, Quaternion.Identity, colour)
     {
-        AmbientLight = 0.1f * new Vector3(colour.R, colour.G, colour.B);
+        AmbientLight = 0.5f * new Vector3(colour.R, colour.G, colour.B);
         DiffuseLight = 0.8f * new Vector3(colour.R, colour.G, colour.B);
         SpecularLight = 1.0f * new Vector3(colour.R, colour.G, colour.B);
     }
